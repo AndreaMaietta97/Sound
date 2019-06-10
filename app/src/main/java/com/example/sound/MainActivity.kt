@@ -10,14 +10,17 @@ import android.util.Log
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.IOException
 
-const val LOG_TAG = "AudioRecordTest"
+
 const val REQUEST_RECORD_AUDIO_PERMISSION = 200
 
-private class MainActivity() : AppCompatActivity() {
+private class MainActivity : AppCompatActivity() {
     private var permissionToRecordAccepted = false
     private var recorder: MediaRecorder? = null
-    var permissions: Array<String> = arrayOf(Manifest.permission.RECORD_AUDIO)
-
+    var permissions: Array<String> = arrayOf(
+        Manifest.permission.RECORD_AUDIO,
+        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+        Manifest.permission.READ_EXTERNAL_STORAGE
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,24 +47,33 @@ private class MainActivity() : AppCompatActivity() {
     private fun startRecording() {
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_2_TS)
-            setOutputFile(soundView.text.toString())
+            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+            setOutputFile("${externalCacheDir.absolutePath}/audiotest.3gp")
             try {
                 prepare()
+            } catch (e: IllegalStateException) {
+                e.printStackTrace()
             } catch (e: IOException) {
-                Log.e(LOG_TAG, "prepare() failed")
+                e.printStackTrace()
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.e("File", e.message)
             }
             start()
+
         }
     }
 
     private fun stopRecording() {
         recorder?.apply {
             stop()
+            //soundView.text = (20 * Math.log10(recorder?.maxAmplitude?.toDouble()?.div(2700.0)!!)).toString()
+            soundView.text = recorder?.maxAmplitude.toString()
             release()
         }
         recorder = null
+
     }
 
     private fun onRecord(start: Boolean) = if (start) {
@@ -69,6 +81,11 @@ private class MainActivity() : AppCompatActivity() {
     } else {
         stopRecording()
     }
+
 }
+
+
+
+
 
 
