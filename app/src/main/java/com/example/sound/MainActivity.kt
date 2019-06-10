@@ -2,6 +2,7 @@ package com.example.sound
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.media.AudioFormat
 import android.media.MediaRecorder
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
@@ -47,7 +48,7 @@ private class MainActivity : AppCompatActivity() {
     private fun startRecording() {
         recorder = MediaRecorder().apply {
             setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+            setOutputFormat(AudioFormat.)
             setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
             setOutputFile("${externalCacheDir.absolutePath}/audiotest.3gp")
             try {
